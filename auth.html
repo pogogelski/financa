@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="shortcut icon" href="icons8-dinheiro-96.png" type="image/x-icon">
+  <title>finança — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0c0c0e; --surface: #111113; --s2: #18181b; --s3: #1c1c1f;
+      --border: #27272a; --border2: #3f3f46;
+      --text: #e4e4e7; --muted: #71717a; --muted2: #52525b;
+      --green: #22c56e; --green2: #16a357; --red: #f87171;
+    }
+    html, body { height: 100%; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow: hidden; }
+
+    .left {
+      display: none; flex-direction: column; justify-content: space-between;
+      width: 480px; flex-shrink: 0;
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 48px 52px; position: relative; overflow: hidden;
+    }
+    @media(min-width:900px){ .left { display: flex; } }
+    .left::before { content:''; position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(34,197,110,.1) 0%,transparent 70%); bottom:-80px; right:-80px; pointer-events:none; }
+    .left::after  { content:''; position:absolute; width:200px; height:200px; background:radial-gradient(circle,rgba(34,197,110,.05) 0%,transparent 70%); top:60px; left:-40px; pointer-events:none; }
+
+    .left-brand { font-family:'Playfair Display',serif; font-size:2rem; color:var(--green); letter-spacing:-.02em; position:relative; z-index:1; }
+    .left-center { position:relative; z-index:1; }
+    .left-tagline { font-size:2.2rem; font-weight:600; line-height:1.2; color:var(--text); letter-spacing:-.03em; margin-bottom:1.25rem; }
+    .left-tagline em { font-family:'Playfair Display',serif; font-style:italic; color:var(--green); }
+    .left-desc { font-size:.95rem; color:var(--muted); line-height:1.65; max-width:340px; }
+    .feat-list { list-style:none; margin-top:2rem; display:flex; flex-direction:column; gap:.75rem; }
+    .feat-item { display:flex; align-items:center; gap:.75rem; font-size:.875rem; color:var(--muted); }
+    .feat-dot { width:20px; height:20px; border-radius:50%; background:rgba(34,197,110,.12); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .feat-dot svg { width:11px; height:11px; color:var(--green); }
+    .left-footer { font-size:.75rem; color:var(--muted2); position:relative; z-index:1; }
+
+    .right { flex:1; display:flex; align-items:center; justify-content:center; padding:2rem 1.5rem; overflow-y:auto; }
+    .form-wrap { width:100%; max-width:380px; animation:fadeUp .4s ease both; }
+
+    .mobile-brand { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--green); text-align:center; margin-bottom:2rem; display:block; }
+    @media(min-width:900px){ .mobile-brand { display:none; } }
+
+    .tabs { display:flex; background:var(--s2); border:1px solid var(--border); border-radius:12px; padding:4px; margin-bottom:2rem; }
+    .tab { flex:1; padding:.6rem; text-align:center; font-size:.875rem; font-weight:500; border-radius:9px; cursor:pointer; color:var(--muted); transition:all .2s; background:transparent; border:none; font-family:'DM Sans',sans-serif; }
+    .tab.active { background:var(--s3); color:var(--text); }
+
+    .form-title { font-size:1.4rem; font-weight:600; letter-spacing:-.02em; margin-bottom:.35rem; }
+    .form-sub   { font-size:.85rem; color:var(--muted); margin-bottom:1.75rem; }
+
+    .form-group { margin-bottom:1rem; }
+    .field-label { display:block; font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:.4rem; }
+    .field { width:100%; background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:.7rem 1rem; font-size:.9rem; color:var(--text); font-family:'DM Sans',sans-serif; outline:none; transition:border-color .15s, box-shadow .15s; }
+    .field:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(34,197,110,.1); }
+    .field::placeholder { color:var(--muted2); }
+    .field.error { border-color:var(--red); box-shadow:0 0 0 3px rgba(248,113,113,.1); }
+
+    .field-error { font-size:.75rem; color:var(--red); margin-top:.35rem; display:none; }
+    .field-error.show { display:block; }
+
+    .pw-wrap { position:relative; }
+    .pw-wrap .field { padding-right:3rem; }
+    .pw-toggle { position:absolute; right:.75rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); padding:.25rem; display:flex; }
+    .pw-toggle:hover { color:var(--text); }
+    .pw-toggle svg { width:16px; height:16px; }
+
+    .strength-wrap { margin-top:.5rem; display:none; }
+    .strength-wrap.show { display:block; }
+    .strength-bar { height:3px; border-radius:99px; background:var(--border); overflow:hidden; }
+    .strength-fill { height:100%; border-radius:99px; transition:width .3s, background .3s; width:0%; }
+    .strength-label { font-size:.7rem; color:var(--muted); margin-top:.3rem; }
+
+    .btn-submit { width:100%; padding:.8rem; background:var(--green); color:#fff; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; margin-top:.5rem; transition:background .15s, transform .1s, opacity .15s; display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .btn-submit:hover { background:var(--green2); }
+    .btn-submit:active { transform:scale(0.99); }
+    .btn-submit:disabled { opacity:.6; cursor:not-allowed; }
+    .btn-submit .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+    .btn-submit.loading .spinner { display:block; }
+    .btn-submit.loading .btn-text { display:none; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .terms { font-size:.75rem; color:var(--muted); text-align:center; margin-top:1.25rem; line-height:1.6; }
+    .terms a { color:var(--green); text-decoration:none; }
+
+    .global-error { background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.2); border-radius:10px; padding:.75rem 1rem; font-size:.82rem; color:var(--red); margin-bottom:1rem; display:none; align-items:center; gap:.5rem; }
+    .global-error.show { display:flex; }
+    .global-error svg { width:15px; height:15px; flex-shrink:0; }
+
+    .success-box { text-align:center; padding:2rem 0; display:none; }
+    .success-box.show { display:block; }
+    .success-icon { width:56px; height:56px; background:rgba(34,197,110,.12); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; }
+    .success-icon svg { width:26px; height:26px; color:var(--green); }
+    .success-title { font-size:1.25rem; font-weight:600; margin-bottom:.5rem; }
+    .success-sub { font-size:.875rem; color:var(--muted); line-height:1.6; }
+
+    .loader-overlay { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:99; transition:opacity .3s; }
+    .loader-overlay.fade { opacity:0; pointer-events:none; }
+    .loader-spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
+  </style>
+</head>
+<body>
+
+
+  <div class="loader-overlay" id="page-loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <div class="left">
+    <div class="left-brand">finança</div>
+    <div class="left-center">
+      <h2 class="left-tagline">Controle total do seu<br/><em>dinheiro</em>, sem complicar.</h2>
+      <p class="left-desc">Registre gastos, acompanhe categorias e visualize sua saúde financeira em tempo real — de qualquer dispositivo.</p>
+      <ul class="feat-list">
+        <li class="feat-item"><div class="feat-dot"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>Dashboard com gráficos em tempo real</li>
+        <li class="feat-item"><div class="feat-dot"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>Categorias personalizáveis com ícones e cores</li>
+        <li class="feat-item"><div class="feat-dot"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>Extrato mensal exportável em PDF</li>
+        <li class="feat-item"><div class="feat-dot"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>Dados sincronizados em qualquer dispositivo</li>
+      </ul>
+    </div>
+    <div class="left-footer">By @Pedro Pogogelski || Um Projeto Sem Fins Lucrativos</div>
+  </div>
+
+  <div class="right">
+    <div class="form-wrap">
+      <span class="mobile-brand">finança</span>
+      <div class="tabs">
+        <button class="tab active" id="tab-login"  onclick="switchTab('login')">Entrar</button>
+        <button class="tab"        id="tab-signup" onclick="switchTab('signup')">Criar conta</button>
+      </div>
+
+      <div class="global-error" id="global-error">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span id="global-error-msg"></span>
+      </div>
+
+
+      <div id="form-login">
+        <h1 class="form-title">Bem-vindo de volta</h1>
+        <p class="form-sub">Entre na sua conta para continuar</p>
+        <div class="form-group">
+          <label class="field-label" for="login-email">E-mail</label>
+          <input type="email" id="login-email" class="field" placeholder="seu@email.com" autocomplete="email"/>
+          <div class="field-error" id="err-login-email">Informe um e-mail válido</div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="login-pw">Senha</label>
+          <div class="pw-wrap">
+            <input type="password" id="login-pw" class="field" placeholder="••••••••" autocomplete="current-password"/>
+            <button class="pw-toggle" onclick="togglePw('login-pw',this)" type="button">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+          <div class="field-error" id="err-login-pw">Informe sua senha</div>
+        </div>
+        <div style="text-align:right;margin-top:-.5rem;margin-bottom:.75rem">
+          <button onclick="handleForgot()" style="font-size:.78rem;color:var(--green);background:none;border:none;cursor:pointer;font-family:inherit">Esqueceu a senha?</button>
+        </div>
+        <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+          <div class="spinner"></div><span class="btn-text">Entrar</span>
+        </button>
+        <p class="terms" style="margin-top:1.5rem">Não tem uma conta? <a href="#" onclick="switchTab('signup')">Criar conta grátis</a></p>
+      </div>
+
+
+      <div id="form-signup" style="display:none">
+        <h1 class="form-title">Criar sua conta</h1>
+        <p class="form-sub">Comece a controlar suas finanças agora</p>
+        <div class="form-group">
+          <label class="field-label" for="su-nome">Seu nome</label>
+          <input type="text" id="su-nome" class="field" placeholder="João Silva" autocomplete="name"/>
+          <div class="field-error" id="err-su-nome">Informe seu nome</div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="su-email">E-mail</label>
+          <input type="email" id="su-email" class="field" placeholder="seu@email.com" autocomplete="email"/>
+          <div class="field-error" id="err-su-email">Informe um e-mail válido</div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="su-pw">Senha</label>
+          <div class="pw-wrap">
+            <input type="password" id="su-pw" class="field" placeholder="Mínimo 6 caracteres" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+            <button class="pw-toggle" onclick="togglePw('su-pw',this)" type="button">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+          <div class="strength-wrap" id="strength-wrap">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <div class="strength-label" id="strength-label"></div>
+          </div>
+          <div class="field-error" id="err-su-pw">Senha deve ter pelo menos 6 caracteres</div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="su-pw2">Confirmar senha</label>
+          <div class="pw-wrap">
+            <input type="password" id="su-pw2" class="field" placeholder="Repita a senha" autocomplete="new-password"/>
+            <button class="pw-toggle" onclick="togglePw('su-pw2',this)" type="button">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+          <div class="field-error" id="err-su-pw2">As senhas não coincidem</div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="su-salario">Renda mensal (R$)</label>
+          <input type="number" id="su-salario" class="field" placeholder="Ex: 3000,00" min="0" step="0.01" autocomplete="off" style="font-family:'DM Mono',monospace"/>
+          <div class="field-error" id="err-su-salario">Informe um valor válido</div>
+        </div>
+        <button class="btn-submit" id="btn-signup" onclick="handleSignup()">
+          <div class="spinner"></div><span class="btn-text">Criar conta grátis</span>
+        </button>
+        <p class="terms">Já tem uma conta? <a href="#" onclick="switchTab('login')">Entrar</a></p>
+      </div>
+
+      <div id="signup-success" style="display:none;text-align:center;padding:1rem 0">
+        <div class="success-icon" style="margin-bottom:1.25rem">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h2 class="form-title">Conta criada!</h2>
+        <p class="form-sub" style="margin-bottom:1.75rem">Redirecionando para o painel…</p>
+        <div style="height:3px;background:var(--border);border-radius:99px;overflow:hidden">
+          <div id="redirect-bar" style="height:100%;background:var(--green);width:0%;transition:width 2.5s linear;border-radius:99px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>

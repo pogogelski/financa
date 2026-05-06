@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="icons8-dinheiro-96.png" type="image/x-icon">
+  <title>Finança — Controle Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            mono: ['DM Mono', 'monospace'],
+            display: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf7', 100: '#dcfcec', 200: '#bbf7d8',
+              300: '#86efbc', 400: '#4ade94', 500: '#22c56e',
+              600: '#16a357', 700: '#158047', 800: '#16643b', 900: '#145232',
+            },
+          },
+          animation: {
+            'fade-in': 'fadeIn .35s ease both',
+            'slide-up': 'slideUp .35s ease both',
+          },
+          keyframes: {
+            fadeIn:  { from: { opacity: 0 }, to: { opacity: 1 } },
+            slideUp: { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="font-sans min-h-screen">
+
+
+  <aside id="sidebar" class="sidebar flex flex-col">
+    <div class="px-6 py-5 border-b border-zinc-800">
+      <span class="font-display text-2xl tracking-tight" style="color:#22c56e">finança</span>
+      <p class="text-xs mt-0.5" style="color:#71717a">controle financeiro pessoal</p>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5">
+      <button onclick="showPage('dashboard')" id="nav-dashboard" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Painel
+      </button>
+      <button onclick="showPage('lancamentos')" id="nav-lancamentos" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Lançamentos
+      </button>
+      <button onclick="showPage('categorias')" id="nav-categorias" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        Categorias
+      </button>
+      <button onclick="showPage('configuracoes')" id="nav-configuracoes" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Configurações
+      </button>
+    </nav>
+    <div class="px-3 py-3 border-t border-zinc-800">
+
+      <div class="flex items-center gap-3 px-2 py-2 rounded-xl mb-2" style="background:#1c1c1f">
+        <div id="user-initials" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#22c56e,#16a357)">U</div>
+        <div class="min-w-0 flex-1">
+          <div id="user-name" class="text-xs font-semibold text-zinc-200 truncate">Usuário</div>
+          <div id="user-email" class="text-xs truncate" style="color:#52525b">email@email.com</div>
+        </div>
+      </div>
+      <button onclick="logout()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors" style="color:#71717a" onmouseover="this.style.background='#1c1c1f';this.style.color='#f87171'" onmouseout="this.style.background='transparent';this.style.color='#71717a'">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Sair da conta
+      </button>
+    </div>
+  </aside>
+
+
+  <div class="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-b border-zinc-800" style="background:#111113">
+    <span class="font-display text-xl" style="color:#22c56e">finança</span>
+    <button onclick="toggleSidebar()" class="p-2 rounded-lg" style="background:#1c1c1f">
+      <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+
+
+  <main class="md:ml-60 pt-16 md:pt-0 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 py-8">
+
+      <div id="page-dashboard" class="page animate-fade-in">
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+          <div>
+            <h1 class="text-2xl font-display font-semibold text-white">Painel</h1>
+            <p class="text-sm mt-0.5" style="color:#71717a" id="dash-subtitle">Visão geral do mês</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <select id="filtro-mes" onchange="renderDashboard()" class="field text-sm py-2 px-3">
+              <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+              <option>Abril</option><option>Maio</option><option>Junho</option>
+              <option>Julho</option><option>Agosto</option><option>Setembro</option>
+              <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+            </select>
+            <select id="filtro-ano" onchange="renderDashboard()" class="field text-sm py-2 px-3">
+              <option>2024</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option><option>2031</option><option>2032</option><option>2033</option><option>2034</option><option>2035</option><option>2036</option><option>2037</option><option>2038</option><option>2039</option><option>2040</option>
+            </select>
+            <button onclick="openModal()" class="btn-primary flex items-center gap-2 text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Novo
+            </button>
+          </div>
+        </div>
+
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="kpi-card animate-slide-up" style="animation-delay:.05s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Salário</span>
+              <div class="kpi-icon" style="background:#1d4ed820"><svg class="w-4 h-4" style="color:#60a5fa" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium text-white" id="kpi-salario">R$ 0</div>
+            <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" style="width:100%;background:#60a5fa"></div></div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.1s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Total gasto</span>
+              <div class="kpi-icon" style="background:#7f1d1d20"><svg class="w-4 h-4" style="color:#f87171" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#f87171" id="kpi-gasto">R$ 0</div>
+            <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" id="kpi-gasto-bar" style="width:0%;background:#f87171"></div></div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.15s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Saldo</span>
+              <div class="kpi-icon" style="background:#14532d20"><svg class="w-4 h-4" style="color:#22c56e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" id="kpi-saldo" style="color:#22c56e">R$ 0</div>
+            <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" id="kpi-saldo-bar" style="width:100%;background:#22c56e"></div></div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.2s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Entradas</span>
+              <div class="kpi-icon" style="background:#78350f20"><svg class="w-4 h-4" style="color:#fbbf24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#fbbf24" id="kpi-entradas">R$ 0</div>
+            <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" id="kpi-ent-bar" style="width:0%;background:#fbbf24"></div></div>
+          </div>
+        </div>
+
+
+        <div class="card mb-6 animate-slide-up" style="animation-delay:.22s">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-zinc-300">Uso do salário</span>
+            <span class="font-mono text-sm font-medium text-white" id="uso-pct">0%</span>
+          </div>
+          <div class="h-3 rounded-full overflow-hidden" style="background:#27272a">
+            <div id="uso-bar" class="h-3 rounded-full transition-all duration-700 ease-out" style="width:0%"></div>
+          </div>
+          <div class="flex justify-between mt-2 text-xs" style="color:#71717a">
+            <span id="uso-label-gasto">Gasto: R$ 0</span>
+            <span id="uso-label-livre">Livre: R$ 0</span>
+          </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div class="card lg:col-span-2 animate-slide-up" style="animation-delay:.25s">
+            <h3 class="text-sm font-medium text-zinc-400 mb-4">Evolução do saldo</h3>
+            <canvas id="lineChart" height="160"></canvas>
+          </div>
+          <div class="card animate-slide-up" style="animation-delay:.3s">
+            <h3 class="text-sm font-medium text-zinc-400 mb-4">Por categoria</h3>
+            <canvas id="pieChart" height="180"></canvas>
+          </div>
+        </div>
+
+
+        <div class="card animate-slide-up" style="animation-delay:.33s">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-medium text-zinc-400">Gastos por categoria</h3>
+            <span class="text-xs" style="color:#52525b">mês selecionado</span>
+          </div>
+          <div id="cat-breakdown" class="space-y-3"></div>
+        </div>
+
+
+        <div class="card mt-4 overflow-hidden p-0 animate-slide-up" style="animation-delay:.36s">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+            <h3 class="text-sm font-medium text-zinc-400">Últimos lançamentos</h3>
+            <button onclick="showPage('lancamentos')" class="text-xs font-medium" style="color:#22c56e;background:none;border:none;cursor:pointer">Ver todos →</button>
+          </div>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-800">
+                <th class="th">Data</th><th class="th">Descrição</th>
+                <th class="th hidden md:table-cell">Categoria</th>
+                <th class="th hidden sm:table-cell">Tipo</th>
+                <th class="th text-right">Valor</th>
+              </tr>
+            </thead>
+            <tbody id="painel-table"></tbody>
+          </table>
+          <div id="painel-empty" class="hidden py-12 text-center text-sm" style="color:#52525b">
+            Nenhum lançamento este mês — clique em <strong style="color:#22c56e">Novo</strong> para começar!
+          </div>
+        </div>
+      </div>
+
+
+      <div id="page-lancamentos" class="page hidden animate-fade-in">
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+          <div>
+            <h1 class="text-2xl font-display font-semibold text-white">Lançamentos</h1>
+            <p class="text-sm mt-0.5" style="color:#71717a">Gerencie suas entradas e saídas</p>
+          </div>
+          <button onclick="openModal()" class="btn-primary flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Novo lançamento
+          </button>
+        </div>
+
+        <div class="card mb-4 flex flex-wrap gap-3 items-center">
+          <input type="text" id="busca" placeholder="Buscar…" oninput="renderLancamentos()" class="field text-sm py-2 flex-1 min-w-40" />
+          <select id="filtro-tipo" onchange="renderLancamentos()" class="field text-sm py-2">
+            <option value="">Todos</option><option value="Entrada">Entradas</option><option value="Saída">Saídas</option>
+          </select>
+          <select id="filtro-cat-lanc" onchange="renderLancamentos()" class="field text-sm py-2">
+            <option value="">Todas categorias</option>
+          </select>
+          <select id="filtro-mes-lanc" onchange="renderLancamentos()" class="field text-sm py-2">
+            <option value="">Todos os meses</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+            <option>Abril</option><option>Maio</option><option>Junho</option>
+            <option>Julho</option><option>Agosto</option><option>Setembro</option>
+            <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+
+        <div class="card overflow-hidden p-0">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-800">
+                <th class="th">Data</th><th class="th">Descrição</th>
+                <th class="th hidden md:table-cell">Categoria</th>
+                <th class="th hidden sm:table-cell">Tipo</th>
+                <th class="th text-right">Valor</th><th class="th"></th>
+              </tr>
+            </thead>
+            <tbody id="lanc-table-body"></tbody>
+          </table>
+          <div id="lanc-empty" class="hidden py-16 text-center text-sm" style="color:#52525b">
+            <svg class="w-10 h-10 mx-auto mb-3 opacity-20 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Nenhum lançamento encontrado
+          </div>
+        </div>
+      </div>
+
+
+      <div id="page-categorias" class="page hidden animate-fade-in">
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+          <div>
+            <h1 class="text-2xl font-display font-semibold text-white">Categorias</h1>
+            <p class="text-sm mt-0.5" style="color:#71717a">Personalize suas categorias</p>
+          </div>
+          <button onclick="openCatModal()" class="btn-primary flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nova categoria
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="cat-grid"></div>
+      </div>
+
+
+      <div id="page-configuracoes" class="page hidden animate-fade-in">
+        <div class="mb-8">
+          <h1 class="text-2xl font-display font-semibold text-white">Configurações</h1>
+          <p class="text-sm mt-0.5" style="color:#71717a">Ajuste suas preferências</p>
+        </div>
+        <div class="max-w-lg space-y-4">
+
+          <div class="card">
+            <h3 class="text-sm font-medium text-zinc-300 mb-4">Perfil financeiro</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="field-label">Nome</label>
+                <input id="cfg-nome" type="text" placeholder="Seu nome" class="field w-full text-sm py-2" oninput="saveConfig()" />
+              </div>
+              <div>
+                <label class="field-label">Salário mensal (R$)</label>
+                <input id="cfg-salario" type="number" placeholder="0,00" step="0.01" class="field w-full text-sm py-2 font-mono" oninput="saveConfig()" />
+              </div>
+              <div>
+                <label class="field-label">Meta de economia (%)</label>
+                <input id="cfg-meta" type="number" placeholder="20" min="0" max="100" class="field w-full text-sm py-2 font-mono" oninput="saveConfig()" />
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <h3 class="text-sm font-medium text-zinc-300 mb-1">Exportar extrato</h3>
+            <p class="text-xs mb-4" style="color:#71717a">Gere um extrato bancário em PDF com todos os seus lançamentos do mês.</p>
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label">Mês</label>
+                  <select id="pdf-mes" class="field w-full text-sm py-2">
+                    <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+                    <option>Abril</option><option>Maio</option><option>Junho</option>
+                    <option>Julho</option><option>Agosto</option><option>Setembro</option>
+                    <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="field-label">Ano</label>
+                  <select id="pdf-ano" class="field w-full text-sm py-2">
+                    <option>2024</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option><option>2031</option><option>2032</option><option>2033</option><option>2034</option><option>2035</option><option>2036</option><option>2037</option><option>2038</option><option>2039</option><option>2040</option>
+                  </select>
+                </div>
+              </div>
+              <button onclick="gerarPDF()" class="btn-primary w-full flex items-center justify-center gap-2 text-sm py-2.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                Gerar extrato em PDF
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="modal" class="modal-overlay hidden">
+    <div class="modal-box animate-slide-up">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-display font-semibold text-white" id="modal-title">Novo lançamento</h2>
+        <button onclick="closeModal()" class="p-1.5 rounded-lg transition-colors" style="color:#71717a;background:#27272a" onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#27272a'">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <input type="hidden" id="m-id" />
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="field-label">Data</label><input type="date" id="m-data" class="field w-full text-sm py-2" /></div>
+          <div><label class="field-label">Tipo</label>
+            <select id="m-tipo" onchange="atualizarCatsPorTipo()" class="field w-full text-sm py-2">
+              <option value="Saída">Saída</option><option value="Entrada">Entrada</option>
+            </select>
+          </div>
+        </div>
+        <div><label class="field-label">Descrição</label><input type="text" id="m-desc" placeholder="Ex: Supermercado, Salário…" class="field w-full text-sm py-2" /></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="field-label">Categoria</label><select id="m-cat" class="field w-full text-sm py-2"></select></div>
+          <div><label class="field-label">Valor (R$)</label><input type="number" id="m-valor" placeholder="0,00" min="0" step="0.01" class="field w-full text-sm py-2 font-mono" /></div>
+        </div>
+        <div><label class="field-label">Observação (opcional)</label><input type="text" id="m-obs" placeholder="Nota adicional…" class="field w-full text-sm py-2" /></div>
+
+
+        <div id="parcela-section">
+          <label class="field-label">Pagamento</label>
+          <div class="flex gap-2">
+            <button type="button" id="btn-avista" onclick="setParcelamento('avista')"
+              class="flex-1 py-2 rounded-xl text-sm font-semibold border transition-all"
+              style="background:rgba(34,197,110,.15);border-color:#22c56e;color:#22c56e">
+              À vista
+            </button>
+            <button type="button" id="btn-parcelado" onclick="setParcelamento('parcelado')"
+              class="flex-1 py-2 rounded-xl text-sm font-semibold border transition-all"
+              style="background:transparent;border-color:#27272a;color:#71717a">
+              Parcelado
+            </button>
+          </div>
+          <div id="parcela-opts" style="display:none;margin-top:.75rem">
+            <label class="field-label">Número de parcelas</label>
+            <div class="flex flex-wrap gap-2 mt-1" id="parcela-grid"></div>
+            <div id="parcela-preview" class="text-xs mt-2" style="color:#71717a"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeModal()" class="flex-1 btn-secondary text-sm py-2.5">Cancelar</button>
+        <button onclick="salvarLancamento()" class="flex-1 btn-primary text-sm py-2.5">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="cat-modal" class="modal-overlay hidden">
+    <div class="modal-box animate-slide-up" style="max-width:380px">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-display font-semibold text-white" id="cat-modal-title">Nova categoria</h2>
+        <button onclick="closeCatModal()" class="p-1.5 rounded-lg" style="color:#71717a;background:#27272a">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <input type="hidden" id="cat-edit-id" />
+      <div class="space-y-4">
+        <div><label class="field-label">Nome</label><input type="text" id="cat-nome" placeholder="Ex: Pets, Academia…" class="field w-full text-sm py-2" /></div>
+        <div>
+          <label class="field-label">Tipo</label>
+          <select id="cat-tipo" class="field w-full text-sm py-2">
+            <option value="Saída">Saída</option>
+            <option value="Entrada">Entrada</option>
+            <option value="Ambos">Ambos (Entrada e Saída)</option>
+          </select>
+        </div>
+        <div><label class="field-label">Cor</label><div class="flex flex-wrap gap-2 mt-1" id="color-picker"></div></div>
+        <div><label class="field-label">Ícone</label><div class="flex flex-wrap gap-2 mt-1" id="icon-picker"></div></div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeCatModal()" class="flex-1 btn-secondary text-sm py-2.5">Cancelar</button>
+        <button onclick="salvarCategoria()" class="flex-1 btn-primary text-sm py-2.5">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div class="text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 animate-slide-up" style="background:#18181b;border:1px solid #27272a;color:#e4e4e7">
+      <svg id="toast-icon" class="w-4 h-4 flex-shrink-0" style="color:#22c56e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      <span id="toast-msg"></span>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="app.js"></script>
+
+  <div id="app-loader" style="display:flex;position:fixed;inset:0;z-index:99;background:#111113;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
+    <span style="font-family:'Playfair Display',serif;font-size:1.8rem;color:#22c56e">finança</span>
+    <div style="width:28px;height:28px;border:2px solid #27272a;border-top-color:#22c56e;border-radius:50%;animation:spin .7s linear infinite"></div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  </div>
+
+ 
+  <div id="custom-popup" class="hidden" style="position:fixed;inset:0;z-index:80;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,0);backdrop-filter:blur(0px);transition:background .2s,backdrop-filter .2s">
+    <div style="background:#18181b;border:1px solid #27272a;border-radius:18px;padding:1.75rem;width:100%;max-width:380px;transform:scale(.95);opacity:0;transition:transform .2s ease,opacity .2s ease" id="popup-box">
+      <div style="text-align:center;margin-bottom:1.25rem">
+        <div id="popup-icon" style="font-size:2rem;margin-bottom:.75rem;line-height:1">⚠️</div>
+        <div id="popup-titulo" style="font-size:1rem;font-weight:600;color:#e4e4e7;margin-bottom:.4rem"></div>
+        <div id="popup-texto" style="font-size:.85rem;color:#71717a;line-height:1.6"></div>
+      </div>
+      <div style="display:flex;gap:.6rem;margin-top:1.5rem">
+        <button id="popup-cancel" class="popup-btn popup-btn-cancel">Cancelar</button>
+        <button id="popup-ok"     class="popup-btn popup-btn-ok">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+</html>
