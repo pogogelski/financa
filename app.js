@@ -904,4 +904,177 @@ ${!linhas.length?'<div class="empty">Nenhum lançamento neste período</div>':`
 
 document.getElementById('modal').addEventListener('click', e=>{if(e.target===document.getElementById('modal'))window.closeModal();});
 document.getElementById('cat-modal').addEventListener('click', e=>{if(e.target===document.getElementById('cat-modal'))window.closeCatModal();});
-document.addEventListener('keydown', e=>{if(e.key==='Escape'){window.closeModal();window.closeCatModal();}});
+document.addEventListener('keydown', e=>{if(e.key==='Escape'){window.closeModal();window.closeCatModal();closeNovidades();}});
+
+const CHANGELOG = [
+  {
+    versao: '1.3.0',
+    data: '2025-06-01',
+    emoji: '🎉',
+    titulo: 'Novidades & Sugestões',
+    itens: [
+      'Novo painel de atualizações para acompanhar o que mudou no app',
+      'Formulário de sugestão de features enviado direto ao Firestore',
+      'Badge verde na sidebar indica quando há novidades não lidas',
+    ]
+  },
+  {
+    versao: '1.2.0',
+    data: '2025-05-10',
+    emoji: '💳',
+    titulo: 'Lançamentos parcelados',
+    itens: [
+      'Suporte a compras parceladas: distribui automaticamente por mês',
+      'Visualização de parcela (ex: 2/6) na lista de lançamentos',
+      'Edição e exclusão individual ou em lote das parcelas',
+    ]
+  },
+  {
+    versao: '1.1.0',
+    data: '2025-04-20',
+    emoji: '📄',
+    titulo: 'Extrato em PDF',
+    itens: [
+      'Geração de extrato bancário mensal em PDF com saldo acumulado',
+      'Layout profissional com resumo e tabela de movimentações',
+      'Exportação direta pelo painel ou pela página de lançamentos',
+    ]
+  },
+  {
+    versao: '1.0.0',
+    data: '2025-03-15',
+    emoji: '🚀',
+    titulo: 'Lançamento do finança',
+    itens: [
+      'Dashboard com KPIs: salário, gastos, saldo e entradas',
+      'Gráfico de linha com evolução do saldo e pizza por categoria',
+      'Categorias personalizáveis com cor e ícone',
+      'Autenticação real com Firebase e dados na nuvem',
+    ]
+  },
+];
+
+const ULTIMA_VERSAO_KEY = 'financa_ultima_versao_vista';
+
+function checkNovidadesBadge() {
+  const visto = localStorage.getItem(ULTIMA_VERSAO_KEY);
+  const atual = CHANGELOG[0]?.versao;
+  const badge = document.getElementById('novidades-badge');
+  if (badge) badge.classList.toggle('hidden', visto === atual);
+}
+
+window.openNovidades = function() {
+  renderChangelog();
+  document.getElementById('novidades-modal').classList.remove('hidden');
+
+  localStorage.setItem(ULTIMA_VERSAO_KEY, CHANGELOG[0]?.versao || '');
+  checkNovidadesBadge();
+};
+
+window.closeNovidades = function() {
+  document.getElementById('novidades-modal').classList.add('hidden');
+};
+
+window.switchNovidadesTab = function(tab) {
+  const tabs   = ['changelog', 'sugestao'];
+  const ativo  = { borderColor: '#22c56e', color: '#22c56e', background: 'rgba(34,197,110,.06)' };
+  const inativo= { borderColor: 'transparent', color: '#71717a', background: 'transparent' };
+  tabs.forEach(t => {
+    const btn   = document.getElementById(`ntab-${t}`);
+    const panel = document.getElementById(`npanel-${t}`);
+    const isActive = t === tab;
+    Object.assign(btn.style,   isActive ? ativo : inativo);
+    panel.style.display = isActive ? 'block' : 'none';
+  });
+};
+
+function renderChangelog() {
+  const container = document.getElementById('changelog-list');
+  if (!container) return;
+
+  const fmtDataPt = iso => {
+    const [y,m,d] = iso.split('-');
+    const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    return `${d} de ${meses[parseInt(m)-1]}. de ${y}`;
+  };
+
+  container.innerHTML = CHANGELOG.map((entry, i) => `
+    <div class="animate-slide-up" style="animation-delay:${i*0.05}s">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base" style="background:#1c1c1f;border:1px solid #27272a">${entry.emoji}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-semibold text-white">${entry.titulo}</span>
+            <span class="text-xs px-1.5 py-0.5 rounded font-mono" style="background:#1c1c1f;color:#52525b;border:1px solid #27272a">v${entry.versao}</span>
+            ${i === 0 ? '<span class="text-xs px-1.5 py-0.5 rounded font-semibold" style="background:rgba(34,197,110,.12);color:#22c56e">Novo</span>' : ''}
+          </div>
+          <div class="text-xs mt-0.5 mb-2" style="color:#52525b">${fmtDataPt(entry.data)}</div>
+          <ul class="space-y-1">
+            ${entry.itens.map(item => `
+              <li class="flex items-start gap-2 text-sm" style="color:#a1a1aa">
+                <svg class="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style="color:#22c56e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                ${item}
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+      ${i < CHANGELOG.length - 1 ? '<div class="mt-4 border-t" style="border-color:#1f1f23"></div>' : ''}
+    </div>
+  `).join('');
+}
+
+window.enviarSugestao = async function() {
+  const titulo = document.getElementById('sug-titulo').value.trim();
+  const desc   = document.getElementById('sug-desc').value.trim();
+  const cat    = document.getElementById('sug-cat').value;
+
+  if (!titulo) {
+    document.getElementById('sug-titulo').focus();
+    toast('Preencha o título da sugestão.', 'err');
+    return;
+  }
+  if (!desc || desc.length < 10) {
+    document.getElementById('sug-desc').focus();
+    toast('Descreva melhor sua ideia (mín. 10 caracteres).', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar-sug');
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Enviando…`;
+
+  try {
+    const sugestoesCol = collection(db, 'sugestoes');
+    await addDoc(sugestoesCol, {
+      titulo,
+      descricao: desc,
+      categoria: cat,
+      usuario: currentUser?.email || 'anônimo',
+      uid: currentUser?.uid || null,
+      enviadoEm: new Date().toISOString(),
+      status: 'pendente',
+    });
+
+    document.getElementById('sug-titulo').value = '';
+    document.getElementById('sug-desc').value   = '';
+    document.getElementById('sug-cat').value    = 'nova-funcao';
+
+    closeNovidades();
+    toast('Sugestão enviada! Obrigado pela contribuição 🙌');
+  } catch(e) {
+    console.error(e);
+    toast('Erro ao enviar. Tente novamente.', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Enviar sugestão`;
+  }
+};
+
+
+document.getElementById('novidades-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('novidades-modal')) closeNovidades();
+});
+
+
+checkNovidadesBadge();
