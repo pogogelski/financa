@@ -909,7 +909,7 @@ document.addEventListener('keydown', e=>{if(e.key==='Escape'){window.closeModal(
 const CHANGELOG = [
   {
     versao: '1.3.0',
-    data: '2025-06-01',
+    data: '2026-05-10',
     emoji: '🎉',
     titulo: 'Novidades & Sugestões',
     itens: [
@@ -920,7 +920,7 @@ const CHANGELOG = [
   },
   {
     versao: '1.2.0',
-    data: '2025-05-10',
+    data: '2026-05-4',
     emoji: '💳',
     titulo: 'Lançamentos parcelados',
     itens: [
@@ -931,7 +931,7 @@ const CHANGELOG = [
   },
   {
     versao: '1.1.0',
-    data: '2025-04-20',
+    data: '2026-04-20',
     emoji: '📄',
     titulo: 'Extrato em PDF',
     itens: [
@@ -942,7 +942,7 @@ const CHANGELOG = [
   },
   {
     versao: '1.0.0',
-    data: '2025-03-15',
+    data: '2026-03-15',
     emoji: '🚀',
     titulo: 'Lançamento do finança',
     itens: [
