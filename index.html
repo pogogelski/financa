@@ -38,7 +38,7 @@
   </script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="font-sans min-h-screen">
+<body class="font-sans min-h-screen dash-shell">
 
 
   <aside id="sidebar" class="sidebar flex flex-col">
@@ -58,6 +58,10 @@
       <button onclick="showPage('categorias')" id="nav-categorias" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
         Categorias
+      </button>
+      <button onclick="showPage('poupanca')" id="nav-poupanca" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+        <span class="w-4 h-4 flex items-center justify-center flex-shrink-0" style="font-size:.95rem">🐷</span>
+        Poupança
       </button>
       <button onclick="showPage('configuracoes')" id="nav-configuracoes" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -88,13 +92,31 @@
 
   <div class="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-b border-zinc-800" style="background:#111113">
     <span class="font-display text-xl" style="color:#22c56e">finança</span>
-    <button onclick="toggleSidebar()" class="p-2 rounded-lg" style="background:#1c1c1f">
-      <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
+    <div class="flex items-center gap-2">
+      <div class="relative">
+        <button onclick="toggleMobileProfile()" id="mobile-profile-btn" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#22c56e,#16a357)">
+          <span id="user-initials-m">U</span>
+        </button>
+        <div id="mobile-profile-dropdown" class="hidden animate-slide-up" style="position:absolute;top:42px;right:0;width:220px;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:.5rem;box-shadow:0 12px 30px rgba(0,0,0,.5)">
+          <div class="px-2 py-1.5">
+            <div id="user-name-m" class="text-sm font-semibold text-zinc-200 truncate">Usuário</div>
+            <div id="user-email-m" class="text-xs truncate" style="color:#52525b">email@email.com</div>
+          </div>
+          <div class="my-1" style="border-top:1px solid #27272a"></div>
+          <button onclick="logout()" class="w-full flex items-center gap-2.5 px-2 py-2 rounded-xl text-xs font-medium transition-colors" style="color:#71717a" onmouseover="this.style.background='#1c1c1f';this.style.color='#f87171'" onmouseout="this.style.background='transparent';this.style.color='#71717a'">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Sair da conta
+          </button>
+        </div>
+      </div>
+      <button onclick="showPage('configuracoes')" id="mobile-config-btn" class="p-2 rounded-lg" style="background:#1c1c1f">
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
   </div>
 
 
-  <main class="md:ml-60 pt-16 md:pt-0 min-h-screen">
+  <main id="app-main" class="md:ml-60 pt-16 md:pt-0 min-h-screen">
     <div class="max-w-6xl mx-auto px-4 md:px-8 py-8">
 
       <div id="page-dashboard" class="page animate-fade-in">
@@ -121,7 +143,7 @@
         </div>
 
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <div class="kpi-card animate-slide-up" style="animation-delay:.05s">
             <div class="flex items-center justify-between mb-3">
               <span class="kpi-label">Salário</span>
@@ -153,6 +175,14 @@
             </div>
             <div class="font-mono text-2xl font-medium" style="color:#fbbf24" id="kpi-entradas">R$ 0</div>
             <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" id="kpi-ent-bar" style="width:0%;background:#fbbf24"></div></div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.25s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Poupança</span>
+              <div class="kpi-icon" style="background:#4c1d9520"><span style="font-size:1rem">🐷</span></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#a78bfa" id="kpi-poupanca">R$ 0</div>
+            <div class="mt-2 kpi-bar-track"><div class="kpi-bar-fill" style="width:100%;background:#a78bfa"></div></div>
           </div>
         </div>
 
@@ -231,7 +261,7 @@
         <div class="card mb-4 flex flex-wrap gap-3 items-center">
           <input type="text" id="busca" placeholder="Buscar…" oninput="renderLancamentos()" class="field text-sm py-2 flex-1 min-w-40" />
           <select id="filtro-tipo" onchange="renderLancamentos()" class="field text-sm py-2">
-            <option value="">Todos</option><option value="Entrada">Entradas</option><option value="Saída">Saídas</option>
+            <option value="">Todos</option><option value="Entrada">Entradas</option><option value="Saída">Saídas</option><option value="Poupança">Poupança</option>
           </select>
           <select id="filtro-cat-lanc" onchange="renderLancamentos()" class="field text-sm py-2">
             <option value="">Todas categorias</option>
@@ -278,6 +308,71 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="cat-grid"></div>
       </div>
+
+
+      <div id="page-poupanca" class="page hidden animate-fade-in">
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+          <div>
+            <h1 class="text-2xl font-display font-semibold text-white">Poupança</h1>
+            <p class="text-sm mt-0.5" style="color:#71717a">Guarde dinheiro sem misturar com seus gastos</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="openPoupancaModal('Resgate')" class="btn-secondary flex items-center gap-2 text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m0 0l-6 6m6-6l6 6"/></svg>
+              Resgatar
+            </button>
+            <button onclick="openPoupancaModal('Depósito')" class="btn-primary flex items-center gap-2 text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Novo depósito
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="kpi-card animate-slide-up" style="animation-delay:.05s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Saldo guardado</span>
+              <div class="kpi-icon" style="background:#4c1d9520"><span style="font-size:1.1rem">🐷</span></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#a78bfa" id="poup-saldo">R$ 0</div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.1s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Total depositado</span>
+              <div class="kpi-icon" style="background:#14532d20"><svg class="w-4 h-4" style="color:#22c56e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#22c56e" id="poup-total-dep">R$ 0</div>
+          </div>
+          <div class="kpi-card animate-slide-up" style="animation-delay:.15s">
+            <div class="flex items-center justify-between mb-3">
+              <span class="kpi-label">Total resgatado</span>
+              <div class="kpi-icon" style="background:#78350f20"><svg class="w-4 h-4" style="color:#fbbf24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></div>
+            </div>
+            <div class="font-mono text-2xl font-medium" style="color:#fbbf24" id="poup-total-res">R$ 0</div>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden p-0 animate-slide-up" style="animation-delay:.2s">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+            <h3 class="text-sm font-medium text-zinc-400">Histórico da poupança</h3>
+          </div>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-800">
+                <th class="th">Data</th><th class="th">Descrição</th>
+                <th class="th hidden sm:table-cell">Tipo</th>
+                <th class="th text-right">Valor</th><th class="th"></th>
+              </tr>
+            </thead>
+            <tbody id="poup-table-body"></tbody>
+          </table>
+          <div id="poup-empty" class="hidden py-16 text-center text-sm" style="color:#52525b">
+            <div style="font-size:1.8rem;opacity:.3;margin-bottom:.5rem">🐷</div>
+            Nenhum movimento na poupança ainda
+          </div>
+        </div>
+      </div>
+
 
 
       <div id="page-configuracoes" class="page hidden animate-fade-in">
@@ -426,6 +521,28 @@
   </div>
 
 
+  <div id="poupanca-modal" class="modal-overlay hidden">
+    <div class="modal-box animate-slide-up" style="max-width:380px">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-display font-semibold text-white" id="poup-modal-title">Novo depósito</h2>
+        <button onclick="closePoupancaModal()" class="p-1.5 rounded-lg" style="color:#71717a;background:#27272a">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <input type="hidden" id="poup-direcao" />
+      <div class="space-y-4">
+        <div><label class="field-label">Data</label><input type="date" id="poup-data" class="field w-full text-sm py-2" /></div>
+        <div><label class="field-label">Valor (R$)</label><input type="number" id="poup-valor" placeholder="0,00" min="0" step="0.01" class="field w-full text-sm py-2 font-mono" /></div>
+        <div><label class="field-label">Observação (opcional)</label><input type="text" id="poup-obs" placeholder="Ex: Reserva de emergência…" class="field w-full text-sm py-2" /></div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closePoupancaModal()" class="flex-1 btn-secondary text-sm py-2.5">Cancelar</button>
+        <button onclick="salvarPoupanca()" id="poup-save-btn" class="flex-1 btn-primary text-sm py-2.5">Depositar</button>
+      </div>
+    </div>
+  </div>
+
+
   <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
     <div class="text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 animate-slide-up" style="background:#18181b;border:1px solid #27272a;color:#e4e4e7">
       <svg id="toast-icon" class="w-4 h-4 flex-shrink-0" style="color:#22c56e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -507,6 +624,32 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script type="module" src="app.js"></script>
+
+
+  <nav id="bottom-nav" class="bottom-nav md:hidden">
+    <button onclick="showPage('dashboard')" id="bnav-dashboard" class="bottom-nav-btn active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      <span>Painel</span>
+    </button>
+    <button onclick="showPage('lancamentos')" id="bnav-lancamentos" class="bottom-nav-btn">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <span>Lançam.</span>
+    </button>
+    <button onclick="showPage('poupanca')" id="bnav-poupanca" class="bottom-nav-btn bottom-nav-fab">
+      <span class="bottom-nav-fab-circle">🐷</span>
+      <span class="bottom-nav-fab-label">Poupança</span>
+    </button>
+    <button onclick="showPage('categorias')" id="bnav-categorias" class="bottom-nav-btn">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+      <span>Categ.</span>
+    </button>
+    <button onclick="openNovidades()" id="bnav-novidades" class="bottom-nav-btn relative">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+      <span>Novidades</span>
+      <span id="bnav-novidades-badge" class="hidden" style="position:absolute;top:2px;right:14px;width:7px;height:7px;border-radius:50%;background:#22c56e"></span>
+    </button>
+  </nav>
+
 
   <div id="app-loader" style="display:flex;position:fixed;inset:0;z-index:99;background:#111113;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
     <span style="font-family:'Playfair Display',serif;font-size:1.8rem;color:#22c56e">finança</span>

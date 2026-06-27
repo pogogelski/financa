@@ -40,7 +40,21 @@ const fmtBRL    = n   => 'R$ ' + Math.abs(n).toLocaleString('pt-BR',{minimumFrac
 const fmtData   = iso => { const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; };
 const mesDeData = iso => MESES[new Date(iso+'T12:00:00').getMonth()];
 const anoDeData = iso => String(new Date(iso+'T12:00:00').getFullYear());
-const getCat    = nome => categorias.find(c=>c.nome===nome)||{cor:'#9ca3af',icone:'📦'};
+const getCat    = nome => nome === 'Poupança'
+  ? { cor:'#a78bfa', icone:'🐷' }
+  : (categorias.find(c=>c.nome===nome)||{cor:'#9ca3af',icone:'📦'});
+
+function tagInfo(l) {
+  if (l.tipo === 'Entrada') return { cls:'tag-entrada', label:'Entrada', sign:'+', color:'#22c56e' };
+  if (l.tipo === 'Saída')   return { cls:'tag-saida',   label:'Saída',   sign:'−', color:'#f87171' };
+  return { cls:'tag-poupanca', label:l.direcao||'Poupança', sign: l.direcao==='Resgate' ? '+' : '−', color:'#a78bfa' };
+}
+
+function calcPoupanca() {
+  const totalDep = lancamentos.filter(l=>l.tipo==='Poupança'&&l.direcao==='Depósito').reduce((a,l)=>a+l.valor,0);
+  const totalRes = lancamentos.filter(l=>l.tipo==='Poupança'&&l.direcao==='Resgate').reduce((a,l)=>a+l.valor,0);
+  return { saldo: totalDep - totalRes, totalDep, totalRes };
+}
 
 
 let toastTimer = null;
@@ -185,7 +199,28 @@ function initUserInfo() {
   document.getElementById('user-initials').textContent = ini;
   document.getElementById('user-name').textContent     = nome;
   document.getElementById('user-email').textContent    = email;
+
+  const iniM = document.getElementById('user-initials-m');
+  if (iniM) iniM.textContent = ini;
+  const nomeM = document.getElementById('user-name-m');
+  if (nomeM) nomeM.textContent = nome;
+  const emailM = document.getElementById('user-email-m');
+  if (emailM) emailM.textContent = email;
 }
+
+
+window.toggleMobileProfile = function() {
+  document.getElementById('mobile-profile-dropdown')?.classList.toggle('hidden');
+};
+
+document.addEventListener('click', e => {
+  const dropdown = document.getElementById('mobile-profile-dropdown');
+  const trigger  = document.getElementById('mobile-profile-btn');
+  if (!dropdown || dropdown.classList.contains('hidden')) return;
+  if (!dropdown.contains(e.target) && e.target !== trigger && !trigger?.contains(e.target)) {
+    dropdown.classList.add('hidden');
+  }
+});
 
 
 window.logout = async function() {
@@ -198,20 +233,24 @@ window.logout = async function() {
 };
 
 
-const PAGES = ['dashboard','lancamentos','categorias','configuracoes'];
+const PAGES = ['dashboard','lancamentos','categorias','poupanca','configuracoes'];
 
 window.showPage = function(name) {
   PAGES.forEach(p => {
     document.getElementById('page-'+p).classList.add('hidden');
-    document.getElementById('nav-'+p).classList.remove('active');
+    document.getElementById('nav-'+p)?.classList.remove('active');
+    document.getElementById('bnav-'+p)?.classList.remove('active');
   });
   document.getElementById('page-'+name).classList.remove('hidden');
-  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  document.getElementById('bnav-'+name)?.classList.add('active');
   if (name==='dashboard')     renderDashboard();
   if (name==='lancamentos')   renderLancamentos();
   if (name==='categorias')    renderCategorias();
+  if (name==='poupanca')      renderPoupanca();
   if (name==='configuracoes') loadConfig();
   document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobile-profile-dropdown')?.classList.add('hidden');
 };
 
 window.toggleSidebar = () => document.getElementById('sidebar').classList.toggle('open');
@@ -242,9 +281,11 @@ function saldoAcumuladoAnterior(mes, ano) {
   const sal      = config.salario || 0;
   const totalE   = anteriores.filter(l=>l.tipo==='Entrada').reduce((a,l)=>a+l.valor, 0);
   const totalS   = anteriores.filter(l=>l.tipo==='Saída').reduce((a,l)=>a+l.valor, 0);
+  const totalDep = anteriores.filter(l=>l.tipo==='Poupança'&&l.direcao==='Depósito').reduce((a,l)=>a+l.valor, 0);
+  const totalRes = anteriores.filter(l=>l.tipo==='Poupança'&&l.direcao==='Resgate').reduce((a,l)=>a+l.valor, 0);
 
 
-  return sal * mesesDistintos.size + totalE - totalS;
+  return sal * mesesDistintos.size + totalE - totalS - totalDep + totalRes;
 }
 
 window.renderDashboard = function() {
@@ -255,8 +296,10 @@ window.renderDashboard = function() {
 
   const gastos        = doMes.filter(l=>l.tipo==='Saída').reduce((a,l)=>a+l.valor,0);
   const entradas      = doMes.filter(l=>l.tipo==='Entrada').reduce((a,l)=>a+l.valor,0);
+  const depositosMes  = doMes.filter(l=>l.tipo==='Poupança'&&l.direcao==='Depósito').reduce((a,l)=>a+l.valor,0);
+  const resgatesMes   = doMes.filter(l=>l.tipo==='Poupança'&&l.direcao==='Resgate').reduce((a,l)=>a+l.valor,0);
   const saldoAnterior = saldoAcumuladoAnterior(mes, ano);
-  const saldo         = saldoAnterior + sal + entradas - gastos;
+  const saldo         = saldoAnterior + sal + entradas - gastos - depositosMes + resgatesMes;
   const perc          = sal>0 ? Math.min(gastos/sal,1) : 0;
   const gPct          = Math.round(perc*100);
   const ePct          = sal>0 ? Math.round(Math.min(entradas/sal,1)*100) : 0;
@@ -307,13 +350,16 @@ window.renderDashboard = function() {
   renderPieChart(doMes);
   renderCatBreakdown(doMes);
   renderRecentTable(doMes);
+  renderPoupancaKpi();
 };
 
 function renderLineChart(doMes, sal) {
   const sorted=[...doMes].sort((a,b)=>a.data.localeCompare(b.data));
   let acc=sal; const labels=[],data=[];
   sorted.forEach(l=>{
-    acc+=l.tipo==='Entrada'?l.valor:-l.valor;
+    if (l.tipo==='Entrada') acc+=l.valor;
+    else if (l.tipo==='Saída') acc-=l.valor;
+    else if (l.tipo==='Poupança') acc += l.direcao==='Resgate' ? l.valor : -l.valor;
     const d=new Date(l.data+'T12:00:00');
     labels.push(`${d.getDate()}/${d.getMonth()+1}`);
     data.push(+acc.toFixed(2));
@@ -362,7 +408,7 @@ function renderRecentTable(doMes) {
   if (!recent.length){tbody.innerHTML='';empty.classList.remove('hidden');return;}
   empty.classList.add('hidden');
   tbody.innerHTML=recent.map((l,i)=>{
-    const cat=getCat(l.categoria); const isE=l.tipo==='Entrada';
+    const cat=getCat(l.categoria); const tag=tagInfo(l);
     const parcelaBadge = l.parcelaTotal
       ? `<span style="margin-left:4px;font-size:.6rem;font-weight:600;padding:.1rem .4rem;border-radius:99px;background:rgba(251,191,36,.1);color:#fbbf24">${l.parcelaNum}/${l.parcelaTotal}</span>`
       : '';
@@ -370,10 +416,16 @@ function renderRecentTable(doMes) {
       <td class="px-4 py-3 font-mono text-xs whitespace-nowrap" style="color:#71717a">${fmtData(l.data)}</td>
       <td class="px-4 py-3 text-sm font-medium text-zinc-200">${l.descricao}${parcelaBadge}</td>
       <td class="px-4 py-3 hidden md:table-cell"><span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full" style="background:${cat.cor}18;color:${cat.cor}">${cat.icone} ${l.categoria}</span></td>
-      <td class="px-4 py-3 hidden sm:table-cell"><span class="${isE?'tag-entrada':'tag-saida'}">${l.tipo}</span></td>
-      <td class="px-4 py-3 text-right font-mono font-medium text-sm" style="color:${isE?'#22c56e':'#f87171'}">${isE?'+':'−'} ${fmtBRL(l.valor)}</td>
+      <td class="px-4 py-3 hidden sm:table-cell"><span class="${tag.cls}">${tag.label}</span></td>
+      <td class="px-4 py-3 text-right font-mono font-medium text-sm" style="color:${tag.color}">${tag.sign} ${fmtBRL(l.valor)}</td>
     </tr>`;
   }).join('');
+}
+
+function renderPoupancaKpi() {
+  const el = document.getElementById('kpi-poupanca');
+  if (!el) return;
+  el.textContent = fmtBRL(calcPoupanca().saldo);
 }
 
 
@@ -395,7 +447,7 @@ window.renderLancamentos = function() {
   empty.classList.add('hidden');
 
   tbody.innerHTML=lista.map((l,i)=>{
-    const cat=getCat(l.categoria); const isE=l.tipo==='Entrada';
+    const cat=getCat(l.categoria); const tag=tagInfo(l); const isPoup=l.tipo==='Poupança';
     const parcelaBadge = l.parcelaTotal
       ? `<span style="margin-left:4px;font-size:.6rem;font-weight:600;padding:.12rem .45rem;border-radius:99px;background:rgba(251,191,36,.1);color:#fbbf24;vertical-align:middle">${l.parcelaNum}/${l.parcelaTotal}</span>`
       : '';
@@ -406,6 +458,9 @@ window.renderLancamentos = function() {
       : `<button onclick="excluirLancamento('${l.firestoreId}','${l.descricao.replace(/'/g,"&#39;")}')" class="act-btn danger" title="Excluir">
            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
          </button>`;
+    const btnEditar = isPoup ? '' : `<button onclick="openModal('${l.firestoreId}')" class="act-btn" title="Editar">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </button>`;
     return `<tr class="row-anim" style="animation-delay:${i*.025}s">
       <td class="px-4 py-3 font-mono text-xs whitespace-nowrap" style="color:#71717a">${fmtData(l.data)}</td>
       <td class="px-4 py-3">
@@ -413,13 +468,11 @@ window.renderLancamentos = function() {
         ${l.obs?`<div class="text-xs mt-0.5" style="color:#52525b">${l.obs}</div>`:''}
       </td>
       <td class="px-4 py-3 hidden md:table-cell"><span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full" style="background:${cat.cor}18;color:${cat.cor}">${cat.icone} ${l.categoria}</span></td>
-      <td class="px-4 py-3 hidden sm:table-cell"><span class="${isE?'tag-entrada':'tag-saida'}">${l.tipo}</span></td>
-      <td class="px-4 py-3 text-right font-mono font-medium text-sm" style="color:${isE?'#22c56e':'#f87171'}">${isE?'+':'−'} ${fmtBRL(l.valor)}</td>
+      <td class="px-4 py-3 hidden sm:table-cell"><span class="${tag.cls}">${tag.label}</span></td>
+      <td class="px-4 py-3 text-right font-mono font-medium text-sm" style="color:${tag.color}">${tag.sign} ${fmtBRL(l.valor)}</td>
       <td class="px-4 py-3">
         <div class="flex gap-1 justify-end">
-          <button onclick="openModal('${l.firestoreId}')" class="act-btn" title="Editar">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-          </button>
+          ${btnEditar}
           ${btnExcluir}
         </div>
       </td>
@@ -681,9 +734,99 @@ window.excluirLancamento = async function(fid, nome, parcelaGrupo) {
       lancamentos = lancamentos.filter(l => l.firestoreId !== fid);
       toast('Lançamento excluído');
     }
-    renderLancamentos(); renderDashboard();
+    renderLancamentos(); renderDashboard(); renderPoupanca();
   } catch(e) {
     await alert_('❌','Erro','Não foi possível excluir. Tente novamente.');
+  }
+};
+
+
+window.renderPoupanca = function() {
+  const tbody = document.getElementById('poup-table-body');
+  if (!tbody) return;
+
+  const { saldo, totalDep, totalRes } = calcPoupanca();
+  document.getElementById('poup-saldo').textContent     = fmtBRL(saldo);
+  document.getElementById('poup-total-dep').textContent  = fmtBRL(totalDep);
+  document.getElementById('poup-total-res').textContent  = fmtBRL(totalRes);
+
+  const movs  = lancamentos.filter(l=>l.tipo==='Poupança').sort((a,b)=>b.data.localeCompare(a.data));
+  const empty = document.getElementById('poup-empty');
+  if (!movs.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = movs.map((l,i)=>{
+    const tag = tagInfo(l);
+    return `<tr class="row-anim" style="animation-delay:${i*.025}s">
+      <td class="px-4 py-3 font-mono text-xs whitespace-nowrap" style="color:#71717a">${fmtData(l.data)}</td>
+      <td class="px-4 py-3">
+        <div class="text-sm font-medium text-zinc-200">${l.descricao}</div>
+        ${l.obs?`<div class="text-xs mt-0.5" style="color:#52525b">${l.obs}</div>`:''}
+      </td>
+      <td class="px-4 py-3 hidden sm:table-cell"><span class="${tag.cls}">${tag.label}</span></td>
+      <td class="px-4 py-3 text-right font-mono font-medium text-sm" style="color:${tag.color}">${tag.sign} ${fmtBRL(l.valor)}</td>
+      <td class="px-4 py-3">
+        <div class="flex gap-1 justify-end">
+          <button onclick="excluirLancamento('${l.firestoreId}','${l.descricao.replace(/'/g,"&#39;")}')" class="act-btn danger" title="Excluir">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+};
+
+window.openPoupancaModal = function(direcao) {
+  document.getElementById('poupanca-modal').classList.remove('hidden');
+  document.getElementById('poup-direcao').value      = direcao;
+  document.getElementById('poup-modal-title').textContent = direcao==='Depósito' ? 'Novo depósito' : 'Resgatar da poupança';
+  document.getElementById('poup-save-btn').textContent    = direcao==='Depósito' ? 'Depositar' : 'Resgatar';
+  document.getElementById('poup-data').value  = new Date().toISOString().split('T')[0];
+  document.getElementById('poup-valor').value = '';
+  document.getElementById('poup-obs').value   = '';
+  setTimeout(()=>document.getElementById('poup-valor').focus(),80);
+};
+
+window.closePoupancaModal = () => document.getElementById('poupanca-modal').classList.add('hidden');
+
+window.salvarPoupanca = async function() {
+  const direcao = document.getElementById('poup-direcao').value;
+  const data    = document.getElementById('poup-data').value;
+  const valor   = parseFloat(document.getElementById('poup-valor').value);
+  const obs     = document.getElementById('poup-obs').value.trim();
+
+  if (!data || !valor || valor <= 0) {
+    await alert_('⚠️','Campos obrigatórios','Preencha a data e um valor válido.');
+    return;
+  }
+
+  if (direcao === 'Resgate') {
+    const { saldo } = calcPoupanca();
+    if (valor > saldo + 0.001) {
+      await alert_('⚠️','Saldo insuficiente', `Você só tem ${fmtBRL(saldo)} guardados na poupança.`);
+      return;
+    }
+  }
+
+  const agora = new Date().toISOString();
+  const payload = {
+    data, tipo:'Poupança', direcao,
+    categoria: 'Poupança',
+    descricao: direcao==='Depósito' ? 'Depósito na poupança' : 'Resgate da poupança',
+    valor, obs,
+    criadoEm: agora, updatedAt: agora
+  };
+
+  try {
+    const ref = await addDoc(lancCol(), payload);
+    lancamentos.unshift({ firestoreId: ref.id, ...payload });
+    window.closePoupancaModal();
+    renderPoupanca();
+    renderDashboard();
+    toast(direcao==='Depósito' ? 'Depósito realizado!' : 'Resgate realizado!');
+  } catch(e) {
+    console.error(e);
+    await alert_('❌','Erro ao salvar','Não foi possível salvar. Tente novamente.');
   }
 };
 
@@ -838,10 +981,17 @@ window.gerarPDF = function() {
   const doMes=[...lancamentos].filter(l=>mesDeData(l.data)===mes&&anoDeData(l.data)===ano).sort((a,b)=>a.data.localeCompare(b.data));
   const totalE=doMes.filter(l=>l.tipo==='Entrada').reduce((a,l)=>a+l.valor,0);
   const totalS=doMes.filter(l=>l.tipo==='Saída').reduce((a,l)=>a+l.valor,0);
+  const totalDep=doMes.filter(l=>l.tipo==='Poupança'&&l.direcao==='Depósito').reduce((a,l)=>a+l.valor,0);
+  const totalRes=doMes.filter(l=>l.tipo==='Poupança'&&l.direcao==='Resgate').reduce((a,l)=>a+l.valor,0);
   const saldoAnt=saldoAcumuladoAnterior(mes, ano);
-  const saldo=saldoAnt+sal+totalE-totalS;
+  const saldo=saldoAnt+sal+totalE-totalS-totalDep+totalRes;
   let acc=saldoAnt+sal;
-  const linhas=doMes.map(l=>{acc+=l.tipo==='Entrada'?l.valor:-l.valor;return{...l,acc};});
+  const linhas=doMes.map(l=>{
+    if (l.tipo==='Entrada') acc+=l.valor;
+    else if (l.tipo==='Saída') acc-=l.valor;
+    else if (l.tipo==='Poupança') acc += l.direcao==='Resgate' ? l.valor : -l.valor;
+    return {...l,acc};
+  });
   const geradoEm=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 
   const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><title>Extrato ${mes} ${ano}</title>
@@ -862,7 +1012,7 @@ window.gerarPDF = function() {
 table{width:100%;border-collapse:collapse}thead tr{border-bottom:1.5px solid #18181b}
 th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#71717a;padding:0 8px 8px;text-align:left}
 th.r{text-align:right}tbody tr{border-bottom:1px solid #e4e4e7}tbody tr:last-child{border-bottom:none}
-tr.er{background:#f0fdf4}td{padding:9px 8px;font-size:12px;vertical-align:middle}
+tr.er{background:#f0fdf4}tr.pr{background:#faf5ff}td{padding:9px 8px;font-size:12px;vertical-align:middle}
 td.mono{font-family:'DM Mono',monospace;font-size:11px}td.r{text-align:right}
 td.g{color:#16a357;font-weight:600}td.rd{color:#dc2626;font-weight:600}td.mt{color:#71717a}
 .pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;background:#e4e4e7;color:#3f3f46}
@@ -879,13 +1029,15 @@ td.g{color:#16a357;font-weight:600}td.rd{color:#dc2626;font-weight:600}td.mt{col
 <div class="sc"><div class="l">Salário</div><div class="v vb">${fmtBRL(sal)}</div></div>
 <div class="sc"><div class="l">Entradas</div><div class="v vg">${fmtBRL(totalE)}</div></div>
 <div class="sc"><div class="l">Saídas</div><div class="v vr">${fmtBRL(totalS)}</div></div>
+<div class="sc"><div class="l">Depositado na poupança</div><div class="v" style="color:#7c3aed">${fmtBRL(totalDep)}</div></div>
+<div class="sc"><div class="l">Resgatado da poupança</div><div class="v" style="color:#7c3aed">${fmtBRL(totalRes)}</div></div>
 <div class="sc"><div class="l">Saldo anterior</div><div class="v ${saldoAnt>=0?'vg':'vr'}">${fmtBRL(saldoAnt)}</div></div>
 <div class="sc"><div class="l">Saldo final</div><div class="v ${saldo>=0?'vg':'vr'}">${fmtBRL(saldo)}</div></div>
 </div>
 <div class="slabel">Movimentações · ${linhas.length} ${linhas.length===1?'lançamento':'lançamentos'}</div>
 ${!linhas.length?'<div class="empty">Nenhum lançamento neste período</div>':`
 <table><thead><tr><th style="width:80px">Data</th><th>Descrição</th><th style="width:110px">Categoria</th><th class="r" style="width:90px">Valor</th><th class="r" style="width:100px">Saldo</th></tr></thead>
-<tbody>${linhas.map(l=>{const isE=l.tipo==='Entrada';const cat=getCat(l.categoria);return`<tr class="${isE?'er':''}"><td class="mono mt">${fmtData(l.data)}</td><td><div style="font-weight:500">${l.descricao}</div>${l.obs?`<div style="font-size:10px;color:#71717a">${l.obs}</div>`:''}</td><td><span class="pill">${cat.icone} ${l.categoria}</span></td><td class="mono r ${isE?'g':'rd'}">${isE?'+':'−'} ${fmtBRL(l.valor)}</td><td class="mono r ${l.acc>=0?'g':'rd'}">${fmtBRL(l.acc)}</td></tr>`;}).join('')}
+<tbody>${linhas.map(l=>{const isE=l.tipo==='Entrada';const isPoup=l.tipo==='Poupança';const isRes=isPoup&&l.direcao==='Resgate';const positivo=isE||isRes;const rowCls=isE?'er':(isPoup?'pr':'');const cat=getCat(l.categoria);return`<tr class="${rowCls}"><td class="mono mt">${fmtData(l.data)}</td><td><div style="font-weight:500">${l.descricao}</div>${l.obs?`<div style="font-size:10px;color:#71717a">${l.obs}</div>`:''}</td><td><span class="pill">${cat.icone} ${l.categoria}</span></td><td class="mono r ${positivo?'g':'rd'}">${positivo?'+':'−'} ${fmtBRL(l.valor)}</td><td class="mono r ${l.acc>=0?'g':'rd'}">${fmtBRL(l.acc)}</td></tr>`;}).join('')}
 <tr class="tot"><td colspan="3" style="font-size:11px;color:#71717a">Total do período</td><td class="r mono ${(totalE-totalS)>=0?'g':'rd'}">${(totalE-totalS)>=0?'+':'−'} ${fmtBRL(Math.abs(totalE-totalS))}</td><td class="r mono ${saldo>=0?'g':'rd'}">${fmtBRL(saldo)}</td></tr>
 </tbody></table>`}
 <div class="footer"><span>finança — controle financeiro pessoal</span><span>Documento gerado automaticamente · ${geradoEm}</span></div>
@@ -904,9 +1056,23 @@ ${!linhas.length?'<div class="empty">Nenhum lançamento neste período</div>':`
 
 document.getElementById('modal').addEventListener('click', e=>{if(e.target===document.getElementById('modal'))window.closeModal();});
 document.getElementById('cat-modal').addEventListener('click', e=>{if(e.target===document.getElementById('cat-modal'))window.closeCatModal();});
-document.addEventListener('keydown', e=>{if(e.key==='Escape'){window.closeModal();window.closeCatModal();closeNovidades();}});
+document.getElementById('poupanca-modal')?.addEventListener('click', e=>{if(e.target===document.getElementById('poupanca-modal'))window.closePoupancaModal();});
+document.addEventListener('keydown', e=>{if(e.key==='Escape'){window.closeModal();window.closeCatModal();window.closePoupancaModal();closeNovidades();document.getElementById('mobile-profile-dropdown')?.classList.add('hidden');}});
 
 const CHANGELOG = [
+
+  {
+    versao: '1.4.0',
+    data: '2026-06-26',
+    emoji: '🐷',
+    titulo: ' Poupança & Barra de navegação',
+    itens: [
+      'Nova seção de Poupança para depósitos e resgates',
+      'Cálculo automático do saldo da poupança e exibição no dashboard',
+      'Nova barra de navegação inferior para acesso rápido às seções',
+    ]
+  },
+
   {
     versao: '1.3.0',
     data: '2026-05-10',
@@ -959,8 +1125,10 @@ const ULTIMA_VERSAO_KEY = 'financa_ultima_versao_vista';
 function checkNovidadesBadge() {
   const visto = localStorage.getItem(ULTIMA_VERSAO_KEY);
   const atual = CHANGELOG[0]?.versao;
-  const badge = document.getElementById('novidades-badge');
-  if (badge) badge.classList.toggle('hidden', visto === atual);
+  const badge  = document.getElementById('novidades-badge');
+  const bbadge = document.getElementById('bnav-novidades-badge');
+  if (badge)  badge.classList.toggle('hidden', visto === atual);
+  if (bbadge) bbadge.classList.toggle('hidden', visto === atual);
 }
 
 window.openNovidades = function() {
