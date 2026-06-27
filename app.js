@@ -1069,7 +1069,7 @@ const CHANGELOG = [
     itens: [
       'Nova seção de Poupança para depósitos e resgates',
       'Cálculo automático do saldo da poupança e exibição no dashboard',
-      'Nova barra de navegação inferior para acesso rápido às seções',
+      'Nova barra de navegação superior na versão mobile para acesso rápido às seções',
     ]
   },
 

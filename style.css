@@ -221,36 +221,14 @@ tbody tr:hover { background: #1c1c1f; }
 
 
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  z-index: 40;
   background: #111113;
   border-top: 1px solid #1f1f23;
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
-  padding: 6px 2px calc(6px + env(safe-area-inset-bottom));
+  padding: 6px 2px 6px;
 }
 @media (min-width: 769px) { .bottom-nav { display: none !important; } }
-
-@media (max-width: 767px) {
-  body.dash-shell {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
-  }
-  #app-main {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .bottom-nav {
-    position: static;
-    flex-shrink: 0;
-  }
-}
 
 .bottom-nav-btn {
   flex: 1;
@@ -265,12 +243,13 @@ tbody tr:hover { background: #1c1c1f; }
   transition: color .15s;
   min-width: 0;
 }
-.bottom-nav-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+.bottom-nav-btn svg { width: 26px; height: 26px; flex-shrink: 0; }
+.bottom-nav-btn > span:not(.bottom-nav-fab-label):not(.bottom-nav-fab-circle) { display: none; }
 .bottom-nav-btn span { white-space: nowrap; line-height: 1; }
 .bottom-nav-btn.active { color: #22c56e; }
 .bottom-nav-btn:active { opacity: .7; }
 
-.bottom-nav-fab { position: relative; transform: translateY(-12px); }
+.bottom-nav-fab { position: relative; transform: translateY(-6px); }
 .bottom-nav-fab-circle {
   width: 46px; height: 46px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -281,7 +260,7 @@ tbody tr:hover { background: #1c1c1f; }
   box-shadow: 0 4px 14px rgba(0,0,0,.45);
   transition: border-color .15s, background .15s, transform .15s;
 }
-.bottom-nav-fab span.bottom-nav-fab-label { margin-top: 3px; color: #71717a; }
+.bottom-nav-fab span.bottom-nav-fab-label { display: none; }
 .bottom-nav-fab.active .bottom-nav-fab-circle {
   border-color: #22c56e;
   background: #16301e;

@@ -90,42 +90,69 @@
   </aside>
 
 
-  <div class="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-b border-zinc-800" style="background:#111113">
-    <span class="font-display text-xl" style="color:#22c56e">finança</span>
-    <div class="flex items-center gap-2">
-      <div class="relative">
-        <button onclick="toggleMobileProfile()" id="mobile-profile-btn" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#22c56e,#16a357)">
-          <span id="user-initials-m">U</span>
-        </button>
-        <div id="mobile-profile-dropdown" class="hidden animate-slide-up" style="position:absolute;top:42px;right:0;width:220px;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:.5rem;box-shadow:0 12px 30px rgba(0,0,0,.5)">
-          <div class="px-2 py-1.5">
-            <div id="user-name-m" class="text-sm font-semibold text-zinc-200 truncate">Usuário</div>
-            <div id="user-email-m" class="text-xs truncate" style="color:#52525b">email@email.com</div>
-          </div>
-          <div class="my-1" style="border-top:1px solid #27272a"></div>
-          <button onclick="logout()" class="w-full flex items-center gap-2.5 px-2 py-2 rounded-xl text-xs font-medium transition-colors" style="color:#71717a" onmouseover="this.style.background='#1c1c1f';this.style.color='#f87171'" onmouseout="this.style.background='transparent';this.style.color='#71717a'">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            Sair da conta
+  <div class="md:hidden fixed top-0 left-0 right-0 z-40" style="background:#111113;border-bottom:1px solid #1f1f23">
+    <!-- Linha superior: logo + ações -->
+    <div class="flex items-center justify-between px-4 py-4">
+      <span class="font-display text-2xl" style="color:#22c56e">finança</span>
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <button onclick="toggleMobileProfile()" id="mobile-profile-btn" class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#22c56e,#16a357)">
+            <span id="user-initials-m">U</span>
           </button>
+          <div id="mobile-profile-dropdown" class="hidden animate-slide-up" style="position:absolute;top:42px;right:0;width:220px;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:.5rem;box-shadow:0 12px 30px rgba(0,0,0,.5)">
+            <div class="px-2 py-1.5">
+              <div id="user-name-m" class="text-sm font-semibold text-zinc-200 truncate">Usuário</div>
+              <div id="user-email-m" class="text-xs truncate" style="color:#52525b">email@email.com</div>
+            </div>
+            <div class="my-1" style="border-top:1px solid #27272a"></div>
+            <button onclick="logout()" class="w-full flex items-center gap-2.5 px-2 py-2 rounded-xl text-xs font-medium transition-colors" style="color:#71717a" onmouseover="this.style.background='#1c1c1f';this.style.color='#f87171'" onmouseout="this.style.background='transparent';this.style.color='#71717a'">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              Sair da conta
+            </button>
+          </div>
         </div>
+        <button onclick="showPage('configuracoes')" id="mobile-config-btn" class="p-2.5 rounded-xl" style="background:#1c1c1f">
+          <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>
       </div>
-      <button onclick="showPage('configuracoes')" id="mobile-config-btn" class="p-2 rounded-lg" style="background:#1c1c1f">
-        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      </button>
     </div>
+    <!-- Nav row (igual à bottom-nav original, agora no topo) -->
+    <nav id="bottom-nav" class="bottom-nav">
+      <button onclick="showPage('dashboard')" id="bnav-dashboard" class="bottom-nav-btn active">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span>Painel</span>
+      </button>
+      <button onclick="showPage('lancamentos')" id="bnav-lancamentos" class="bottom-nav-btn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span>Lançam.</span>
+      </button>
+      <button onclick="showPage('poupanca')" id="bnav-poupanca" class="bottom-nav-btn bottom-nav-fab">
+        <span class="bottom-nav-fab-circle">🐷</span>
+        <span class="bottom-nav-fab-label">Poupança</span>
+      </button>
+      <button onclick="showPage('categorias')" id="bnav-categorias" class="bottom-nav-btn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        <span>Categ.</span>
+      </button>
+      <button onclick="openNovidades()" id="bnav-novidades" class="bottom-nav-btn relative">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span>Novidades</span>
+        <span id="bnav-novidades-badge" class="hidden" style="position:absolute;top:2px;right:14px;width:7px;height:7px;border-radius:50%;background:#22c56e"></span>
+      </button>
+    </nav>
   </div>
 
 
-  <main id="app-main" class="md:ml-60 pt-16 md:pt-0 min-h-screen">
+  <main id="app-main" class="md:ml-60 pt-36 md:pt-0 min-h-screen">
     <div class="max-w-6xl mx-auto px-4 md:px-8 py-8">
 
       <div id="page-dashboard" class="page animate-fade-in">
-        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <div>
+        <div class="flex items-center justify-between md:justify-between justify-center mb-8 flex-wrap gap-3">
+          <div class="hidden md:block">
             <h1 class="text-2xl font-display font-semibold text-white">Painel</h1>
             <p class="text-sm mt-0.5" style="color:#71717a" id="dash-subtitle">Visão geral do mês</p>
           </div>
-          <div class="flex gap-2 flex-wrap">
+          <div class="flex gap-2 flex-wrap justify-center w-full md:w-auto">
             <select id="filtro-mes" onchange="renderDashboard()" class="field text-sm py-2 px-3">
               <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
               <option>Abril</option><option>Maio</option><option>Junho</option>
@@ -626,29 +653,7 @@
   <script type="module" src="app.js"></script>
 
 
-  <nav id="bottom-nav" class="bottom-nav md:hidden">
-    <button onclick="showPage('dashboard')" id="bnav-dashboard" class="bottom-nav-btn active">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-      <span>Painel</span>
-    </button>
-    <button onclick="showPage('lancamentos')" id="bnav-lancamentos" class="bottom-nav-btn">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      <span>Lançam.</span>
-    </button>
-    <button onclick="showPage('poupanca')" id="bnav-poupanca" class="bottom-nav-btn bottom-nav-fab">
-      <span class="bottom-nav-fab-circle">🐷</span>
-      <span class="bottom-nav-fab-label">Poupança</span>
-    </button>
-    <button onclick="showPage('categorias')" id="bnav-categorias" class="bottom-nav-btn">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-      <span>Categ.</span>
-    </button>
-    <button onclick="openNovidades()" id="bnav-novidades" class="bottom-nav-btn relative">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-      <span>Novidades</span>
-      <span id="bnav-novidades-badge" class="hidden" style="position:absolute;top:2px;right:14px;width:7px;height:7px;border-radius:50%;background:#22c56e"></span>
-    </button>
-  </nav>
+
 
 
   <div id="app-loader" style="display:flex;position:fixed;inset:0;z-index:99;background:#111113;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
