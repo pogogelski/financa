@@ -249,7 +249,7 @@ tbody tr:hover { background: #1c1c1f; }
 .bottom-nav-btn.active { color: #22c56e; }
 .bottom-nav-btn:active { opacity: .7; }
 
-.bottom-nav-fab { position: relative; transform: translateY(-6px); }
+.bottom-nav-fab { position: relative; transform: translateY(-6px); z-index: 0; }
 .bottom-nav-fab-circle {
   width: 46px; height: 46px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
